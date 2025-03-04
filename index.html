@@ -55,10 +55,11 @@
         <div id="debug"></div>
     </div>
     <script>
-        // Set up the button with the deep link
+        // Set up the button with the intent URL
         const code = getQueryParam("code");
         if (code) {
-            document.getElementById("auth-button").href = "flowfund://open?code=" + encodeURIComponent(code);
+            const intentUrl = `intent://open?code=${encodeURIComponent(code)}#Intent;scheme=flowfund;package=com.zero.flowfund;end;`;
+            document.getElementById("auth-button").href = intentUrl;
             document.getElementById("debug").innerHTML = "Authorization code received. Click the button to complete authentication.";
         } else {
             document.getElementById("debug").innerHTML = "No authorization code found in URL.";
