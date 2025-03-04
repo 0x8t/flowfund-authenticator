@@ -55,12 +55,25 @@
         <div id="debug"></div>
     </div>
     <script>
-        // Set up the button with the HTTPS URL
+        // Set up the button with both URL schemes
         const code = getQueryParam("code");
         if (code) {
-            const appUrl = `https://0x8t.github.io/flowfund-authenticator/?code=${encodeURIComponent(code)}`;
-            document.getElementById("auth-button").href = appUrl;
-            document.getElementById("debug").innerHTML = `URL: ${appUrl}`;
+            const deepLinkUrl = `flowfund://open?code=${encodeURIComponent(code)}`;
+            const intentUrl = `intent://open?code=${encodeURIComponent(code)}#Intent;scheme=flowfund;package=com.zero.flowfund;end;`;
+            
+            // Log both URLs for debugging
+            document.getElementById("debug").innerHTML = 
+                `Deep Link URL: ${deepLinkUrl}<br>` +
+                `Intent URL: ${intentUrl}`;
+            
+            // Set the button to try both URLs
+            document.getElementById("auth-button").onclick = function(e) {
+                e.preventDefault();
+                window.location.href = intentUrl;
+                setTimeout(() => {
+                    window.location.href = deepLinkUrl;
+                }, 100);
+            };
         } else {
             document.getElementById("debug").innerHTML = "No authorization code found in URL.";
         }
