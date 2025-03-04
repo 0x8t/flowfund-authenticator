@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Launching FlowFund...</title>
+    <title>FlowFund Authentication</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,20 +21,17 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .loading {
-            margin: 20px 0;
-        }
-        .fallback-link {
-            color: #2196F3;
-            text-decoration: none;
-            padding: 10px 20px;
-            background-color: #2196F3;
+        .button {
             color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            background-color: #2196F3;
             border-radius: 4px;
             display: inline-block;
             margin-top: 20px;
+            font-size: 16px;
         }
-        .fallback-link:hover {
+        .button:hover {
             background-color: #1976D2;
         }
         #debug {
@@ -48,54 +45,23 @@
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
-
-        function openApp() {
-            var userAgent = navigator.userAgent.toLowerCase();
-            var code = getQueryParam("code");
-            var debug = document.getElementById("debug");
-
-            if (!code) {
-                debug.innerHTML = "No authorization code found in URL";
-                return;
-            }
-
-            // Construct URLs
-            var deepLink = "flowfund://open?code=" + encodeURIComponent(code);
-            var intentLink = "intent://open?code=" + encodeURIComponent(code) + "#Intent;scheme=flowfund;package=com.zero.flowfund;end;";
-
-            debug.innerHTML = "Attempting to open app...<br>";
-            debug.innerHTML += "User Agent: " + userAgent + "<br>";
-            debug.innerHTML += "Code: " + code + "<br>";
-            debug.innerHTML += "Deep Link: " + deepLink + "<br>";
-            debug.innerHTML += "Intent Link: " + intentLink + "<br>";
-
-            // Try to open app
-            if (userAgent.includes("chrome")) {
-                debug.innerHTML += "Using intent scheme for Chrome<br>";
-                window.location.href = intentLink;
-            } else {
-                debug.innerHTML += "Using deep link scheme<br>";
-                window.location.href = deepLink;
-            }
-        }
-
-        // Automatically launch app when the page loads
-        window.onload = openApp;
     </script>
 </head>
 <body>
     <div class="container">
-        <h2>Launching FlowFund...</h2>
-        <div class="loading">Please wait while we open the app...</div>
-        <p>If the app does not open automatically, click the button below:</p>
-        <a id="fallback-link" class="fallback-link">Open FlowFund App</a>
+        <h2>FlowFund Authentication</h2>
+        <p>Click the button below to complete the authentication:</p>
+        <a id="auth-button" class="button">Complete Authentication</a>
         <div id="debug"></div>
     </div>
     <script>
-        // Update the fallback link dynamically
+        // Set up the button with the deep link
         const code = getQueryParam("code");
         if (code) {
-            document.getElementById("fallback-link").href = "flowfund://open?code=" + encodeURIComponent(code);
+            document.getElementById("auth-button").href = "flowfund://open?code=" + encodeURIComponent(code);
+            document.getElementById("debug").innerHTML = "Authorization code received. Click the button to complete authentication.";
+        } else {
+            document.getElementById("debug").innerHTML = "No authorization code found in URL.";
         }
     </script>
 </body>
