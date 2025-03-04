@@ -27,9 +27,15 @@
         .fallback-link {
             color: #2196F3;
             text-decoration: none;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 20px;
         }
         .fallback-link:hover {
-            text-decoration: underline;
+            background-color: #1976D2;
         }
         #debug {
             margin-top: 20px;
@@ -56,7 +62,6 @@
             // Construct URLs
             var deepLink = "flowfund://open?code=" + encodeURIComponent(code);
             var intentLink = "intent://open?code=" + encodeURIComponent(code) + "#Intent;scheme=flowfund;package=com.zero.flowfund;end;";
-            var playStoreLink = "https://play.google.com/store/apps/details?id=com.zero.flowfund";
 
             debug.innerHTML = "Attempting to open app...<br>";
             debug.innerHTML += "User Agent: " + userAgent + "<br>";
@@ -72,17 +77,6 @@
                 debug.innerHTML += "Using deep link scheme<br>";
                 window.location.href = deepLink;
             }
-
-            // Only redirect to Play Store if we're sure the app isn't installed
-            setTimeout(function () {
-                debug.innerHTML += "Checking if app opened...<br>";
-                if (document.hidden) {
-                    debug.innerHTML += "App might have opened successfully<br>";
-                    return;
-                }
-                debug.innerHTML += "Redirecting to Play Store...<br>";
-                window.location.href = playStoreLink;
-            }, 3000);
         }
 
         // Automatically launch app when the page loads
@@ -93,7 +87,8 @@
     <div class="container">
         <h2>Launching FlowFund...</h2>
         <div class="loading">Please wait while we open the app...</div>
-        <p>If the app does not open automatically, <a id="fallback-link" class="fallback-link">click here</a>.</p>
+        <p>If the app does not open automatically, click the button below:</p>
+        <a id="fallback-link" class="fallback-link">Open FlowFund App</a>
         <div id="debug"></div>
     </div>
     <script>
