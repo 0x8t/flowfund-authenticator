@@ -58,8 +58,8 @@
         // Set up the button with both URL schemes
         const code = getQueryParam("code");
         if (code) {
-            const deepLinkUrl = `flowfund://open?code=${encodeURIComponent(code)}`;
-            const intentUrl = `intent://open?code=${encodeURIComponent(code)}#Intent;scheme=flowfund;package=com.zero.flowfund;end;`;
+            const deepLinkUrl = `flowfund://com.zero.flowfund?code=${encodeURIComponent(code)}`;
+            const intentUrl = `intent://com.zero.flowfund?code=${encodeURIComponent(code)}#Intent;scheme=flowfund;package=com.zero.flowfund;end;`;
             
             // Log both URLs for debugging
             document.getElementById("debug").innerHTML = 
