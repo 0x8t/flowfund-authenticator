@@ -31,6 +31,11 @@
         .fallback-link:hover {
             text-decoration: underline;
         }
+        #debug {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
     </style>
     <script>
         function getQueryParam(name) {
@@ -40,24 +45,38 @@
 
         function openApp() {
             var userAgent = navigator.userAgent.toLowerCase();
-            var code = getQueryParam("code") || "defaultCode"; // Get code from URL or use default
+            var code = getQueryParam("code") || "defaultCode";
+            var debug = document.getElementById("debug");
 
-            // Construct deep link URL
+            // Construct URLs
             var deepLink = "flowfund://open?code=" + encodeURIComponent(code);
             var intentLink = "intent://open?code=" + encodeURIComponent(code) + "#Intent;scheme=flowfund;package=com.zero.flowfund;end;";
             var playStoreLink = "https://play.google.com/store/apps/details?id=com.zero.flowfund";
 
-            // Attempt to open app
+            debug.innerHTML = "Attempting to open app...<br>";
+            debug.innerHTML += "User Agent: " + userAgent + "<br>";
+            debug.innerHTML += "Deep Link: " + deepLink + "<br>";
+            debug.innerHTML += "Intent Link: " + intentLink + "<br>";
+
+            // Try to open app
             if (userAgent.includes("chrome")) {
-                window.location.href = intentLink; // Use intent for Chrome
+                debug.innerHTML += "Using intent scheme for Chrome<br>";
+                window.location.href = intentLink;
             } else {
-                window.location.href = deepLink; // Use deep link for other browsers
+                debug.innerHTML += "Using deep link scheme<br>";
+                window.location.href = deepLink;
             }
 
-            // Redirect to Play Store if the app is not installed
+            // Only redirect to Play Store if we're sure the app isn't installed
             setTimeout(function () {
+                debug.innerHTML += "Checking if app opened...<br>";
+                if (document.hidden) {
+                    debug.innerHTML += "App might have opened successfully<br>";
+                    return;
+                }
+                debug.innerHTML += "Redirecting to Play Store...<br>";
                 window.location.href = playStoreLink;
-            }, 2000);
+            }, 3000); // Increased timeout to 3 seconds
         }
 
         // Automatically launch app when the page loads
@@ -69,6 +88,7 @@
         <h2>Launching FlowFund...</h2>
         <div class="loading">Please wait while we open the app...</div>
         <p>If the app does not open automatically, <a id="fallback-link" class="fallback-link">click here</a>.</p>
+        <div id="debug"></div>
     </div>
     <script>
         // Update the fallback link dynamically
