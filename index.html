@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FlowFund Authentication</title>
+    <title>FundSync Authentication</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -27,9 +27,12 @@
             padding: 12px 24px;
             background-color: #2196F3;
             border-radius: 4px;
-            display: inline-block;
+            display: none; /* Hidden by default */
             margin-top: 20px;
             font-size: 16px;
+        }
+        .button.visible {
+            display: inline-block;
         }
         .button:hover {
             background-color: #1976D2;
@@ -39,44 +42,69 @@
             font-size: 12px;
             color: #666;
         }
+        #status {
+            margin-top: 10px;
+            color: #666;
+        }
     </style>
     <script>
         function getQueryParam(name) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(name);
         }
+
+        function tryOpenApp(intentUrl, deepLinkUrl) {
+            // Try the Intent URL first
+            window.location.href = intentUrl;
+
+            // Set a timeout to try the deep link as fallback
+            setTimeout(() => {
+                window.location.href = deepLinkUrl;
+            }, 250);
+
+            // Show the manual button after a delay if both attempts fail
+            setTimeout(() => {
+                const button = document.getElementById("auth-button");
+                button.classList.add("visible");
+                document.getElementById("status").textContent = 
+                    "If the app didn't open automatically, click the button below:";
+            }, 1500);
+        }
     </script>
 </head>
 <body>
     <div class="container">
-        <h2>FlowFund Authentication</h2>
-        <p>Click the button below to complete the authentication:</p>
-        <a id="auth-button" class="button">Complete Authentication</a>
+        <h2>FundSync Authentication</h2>
+        <p>Attempting to open FundSync...</p>
+        <p id="status"></p>
+        <a id="auth-button" class="button">Open FundSync App</a>
         <div id="debug"></div>
     </div>
     <script>
-        // Set up the button with both URL schemes
-        const code = getQueryParam("code");
-        if (code) {
-            const deepLinkUrl = `flowfund://com.zero.flowfund?code=${encodeURIComponent(code)}`;
-            const intentUrl = `intent://com.zero.flowfund?code=${encodeURIComponent(code)}#Intent;scheme=flowfund;package=com.zero.flowfund;end;`;
-            
-            // Log both URLs for debugging
-            document.getElementById("debug").innerHTML = 
-                `Deep Link URL: ${deepLinkUrl}<br>` +
-                `Intent URL: ${intentUrl}`;
-            
-            // Set the button to try both URLs
-            document.getElementById("auth-button").onclick = function(e) {
-                e.preventDefault();
-                window.location.href = intentUrl;
-                setTimeout(() => {
-                    window.location.href = deepLinkUrl;
-                }, 100);
-            };
-        } else {
-            document.getElementById("debug").innerHTML = "No authorization code found in URL.";
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const code = getQueryParam("code");
+            if (code) {
+                const deepLinkUrl = `fundsync://com.zero.fundsync?code=${encodeURIComponent(code)}`;
+                const intentUrl = `intent://com.zero.fundsync?code=${encodeURIComponent(code)}#Intent;scheme=fundsync;package=com.zero.fundsync;end;`;
+                
+                // Log URLs for debugging
+                document.getElementById("debug").innerHTML = 
+                    `Deep Link URL: ${deepLinkUrl}<br>` +
+                    `Intent URL: ${intentUrl}`;
+                
+                // Set up the manual button
+                document.getElementById("auth-button").onclick = function(e) {
+                    e.preventDefault();
+                    tryOpenApp(intentUrl, deepLinkUrl);
+                };
+
+                // Attempt to open the app automatically
+                tryOpenApp(intentUrl, deepLinkUrl);
+            } else {
+                document.getElementById("status").textContent = "No authorization code found in URL.";
+                document.getElementById("debug").innerHTML = "No authorization code found in URL.";
+            }
+        });
     </script>
 </body>
 </html>
